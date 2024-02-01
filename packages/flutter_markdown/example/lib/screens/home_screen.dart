@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../demos/basic_markdown_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/extended_emoji_demo.dart';
+import '../demos/extended_md.dart';
 import '../demos/markdown_body_shrink_wrap_demo.dart';
 import '../demos/minimal_markdown_demo.dart';
 import '../demos/original_demo.dart';
@@ -44,6 +45,18 @@ class HomeScreen extends StatelessWidget {
           color: Colors.black12,
           child: ListView(
             children: <Widget>[
+              ListTile(
+                title: const Text('Extended Markdown Demo'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          const ExtendedMarkdown(),
+                    ),
+                  );
+                },
+              ),
               for (final MarkdownDemoWidget demo in _demos)
                 DemoCard(widget: demo),
             ],

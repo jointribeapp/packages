@@ -117,7 +117,10 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onTapText,
     this.softLineBreak = false,
+    required this.otherBlockTags,
   });
+
+  final Set<String> otherBlockTags;
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
@@ -217,7 +220,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     int? start;
-    if (_isBlockTag(tag)) {
+    if (_isBlockTagInternal(tag)) {
       _addAnonymousBlockIfNeeded();
       if (_isListTag(tag)) {
         _listIndents.add(tag);
@@ -368,11 +371,14 @@ class MarkdownBuilder implements md.NodeVisitor {
     _lastVisitedTag = null;
   }
 
+  bool _isBlockTagInternal(String? tag) =>
+      _isBlockTag(tag) || otherBlockTags.contains(tag);
+
   @override
   void visitElementAfter(md.Element element) {
     final String tag = element.tag;
 
-    if (_isBlockTag(tag)) {
+    if (_isBlockTagInternal(tag)) {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
@@ -454,6 +460,16 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       } else if (tag == 'hr') {
         child = Container(decoration: styleSheet.horizontalRuleDecoration);
+      } else if (builders.containsKey(tag)) {
+        final Widget? c = builders[tag]!.visitElementAfterWithContext(
+          delegate.context,
+          element,
+          styleSheet.styles[tag],
+          null,
+        );
+        if (c != null) {
+          child = c;
+        }
       }
 
       _addBlockChild(child);

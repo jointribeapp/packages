@@ -188,7 +188,10 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
+    this.otherBlockTags = const <String>{},
   });
+
+  final Set<String> otherBlockTags;
 
   /// The Markdown to display.
   final String data;
@@ -355,6 +358,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onTapText: widget.onTapText,
       softLineBreak: widget.softLineBreak,
+      otherBlockTags: widget.otherBlockTags,
     );
 
     _children = builder.build(astNodes);
@@ -430,6 +434,7 @@ class MarkdownBody extends MarkdownWidget {
     this.shrinkWrap = true,
     super.fitContent = true,
     super.softLineBreak,
+    super.otherBlockTags,
   });
 
   /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
@@ -486,6 +491,7 @@ class Markdown extends MarkdownWidget {
     this.physics,
     this.shrinkWrap = false,
     super.softLineBreak,
+    super.otherBlockTags,
   });
 
   /// The amount of space by which to inset the children.
