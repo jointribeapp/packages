@@ -459,7 +459,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           child: child,
         );
       } else if (tag == 'hr') {
-        child = Container(decoration: styleSheet.horizontalRuleDecoration);
+        child = Container(
+          margin: styleSheet.horizontalRulePadding,
+          decoration: styleSheet.horizontalRuleDecoration,
+        );
       } else if (builders.containsKey(tag)) {
         final Widget? c = builders[tag]!.visitElementAfterWithContext(
           delegate.context,

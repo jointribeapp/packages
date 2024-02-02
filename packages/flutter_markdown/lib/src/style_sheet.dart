@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 class MarkdownStyleSheet {
   /// Creates an explicit mapping of [TextStyle] objects to Markdown elements.
   MarkdownStyleSheet({
+    this.horizontalRulePadding,
     this.a,
     this.p,
     this.pPadding,
@@ -330,6 +331,7 @@ class MarkdownStyleSheet {
   /// Creates a [MarkdownStyleSheet] based on the current style, with the
   /// provided parameters overridden.
   MarkdownStyleSheet copyWith({
+    EdgeInsets? horizontalRulePadding,
     TextStyle? a,
     TextStyle? p,
     EdgeInsets? pPadding,
@@ -383,6 +385,8 @@ class MarkdownStyleSheet {
     double? textScaleFactor,
   }) {
     return MarkdownStyleSheet(
+      horizontalRulePadding:
+          horizontalRulePadding ?? this.horizontalRulePadding,
       a: a ?? this.a,
       p: p ?? this.p,
       pPadding: pPadding ?? this.pPadding,
@@ -446,6 +450,8 @@ class MarkdownStyleSheet {
       return this;
     }
     return copyWith(
+      horizontalRulePadding:
+          other.horizontalRulePadding ?? horizontalRulePadding,
       a: a!.merge(other.a),
       p: p!.merge(other.p),
       pPadding: other.pPadding,
@@ -508,6 +514,8 @@ class MarkdownStyleSheet {
 
   /// The padding to use for `p` elements.
   final EdgeInsets? pPadding;
+
+  final EdgeInsets? horizontalRulePadding;
 
   /// The [TextStyle] to use for `code` elements.
   final TextStyle? code;
