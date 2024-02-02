@@ -61,6 +61,7 @@ class MarkdownStyleSheet {
     this.blockquoteAlign = WrapAlignment.start,
     this.codeblockAlign = WrapAlignment.start,
     this.textScaleFactor,
+    this.additionalStyles = const <String, TextStyle>{},
   }) : _styles = <String, TextStyle?>{
           'a': a,
           'p': p,
@@ -82,6 +83,7 @@ class MarkdownStyleSheet {
           'th': tableHead,
           'tr': tableBody,
           'td': tableBody,
+          ...additionalStyles,
         };
 
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
@@ -332,6 +334,7 @@ class MarkdownStyleSheet {
   /// provided parameters overridden.
   MarkdownStyleSheet copyWith({
     EdgeInsets? horizontalRulePadding,
+    Map<String, TextStyle>? additionalStyles,
     TextStyle? a,
     TextStyle? p,
     EdgeInsets? pPadding,
@@ -387,6 +390,7 @@ class MarkdownStyleSheet {
     return MarkdownStyleSheet(
       horizontalRulePadding:
           horizontalRulePadding ?? this.horizontalRulePadding,
+      additionalStyles: additionalStyles ?? this.additionalStyles,
       a: a ?? this.a,
       p: p ?? this.p,
       pPadding: pPadding ?? this.pPadding,
@@ -452,6 +456,7 @@ class MarkdownStyleSheet {
     return copyWith(
       horizontalRulePadding:
           other.horizontalRulePadding ?? horizontalRulePadding,
+      additionalStyles: other.additionalStyles,
       a: a!.merge(other.a),
       p: p!.merge(other.p),
       pPadding: other.pPadding,
@@ -516,6 +521,8 @@ class MarkdownStyleSheet {
   final EdgeInsets? pPadding;
 
   final EdgeInsets? horizontalRulePadding;
+
+  final Map<String, TextStyle> additionalStyles;
 
   /// The [TextStyle] to use for `code` elements.
   final TextStyle? code;

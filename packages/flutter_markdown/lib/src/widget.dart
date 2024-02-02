@@ -58,6 +58,9 @@ abstract class SyntaxHighlighter {
 
 /// An interface for an element builder.
 abstract class MarkdownElementBuilder {
+  TextStyle? parentStyle;
+  late BuildContext context;
+
   /// Called when an Element has been reached, before its children have been
   /// visited.
   void visitElementBefore(md.Element element) {}
@@ -86,6 +89,8 @@ abstract class MarkdownElementBuilder {
     TextStyle? preferredStyle,
     TextStyle? parentStyle,
   ) {
+    this.parentStyle = parentStyle;
+    this.context = context;
     return visitElementAfter(element, preferredStyle);
   }
 

@@ -11,39 +11,47 @@ class ExtendedMarkdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final md = MarkdownBody(
-//       data: '''
-// # Extended **Markdown** *Test*
-// ## Extended **Markdown** *Test*
-// ### Extended **Markdown** *Test*
-// #### Extended **Markdown** *Test*
-// ##### Extended **Markdown** *Test*
-
-// **Why** *does* theirs work??
-
-// ---
-
-// Text here
-// <br/>
-// Text there
-
-// Some text <style color="primary">with style</style> and some text without. **This** should
-// keep on going and not break after the style
-
-// Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some text without. This should
-// keep on going and not break after the tooltip
-// ''',
       data: '''
-  Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some *text* without. When it wraps, we lose the text...
+# Extended **Markdown** *Test*
+## Extended **Markdown** *Test*
+### Extended **Markdown** *Test*
+#### Extended **Markdown** *Test*
+##### Extended **Markdown** *Test*
+
+**Why** *does* theirs work??
+
+---
+
+Text here
+<br/>
+Text there
+
+Some text <style color="primary">with style</style> and some text without. **This** should
+keep on going and not break after the style
+
+Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some text without. This should
+keep on going and not break after the tooltip
 ''',
+//       data: '''
+//   Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some *text* without. When it wraps, we lose the text...
+// ''',
+//       data: '''
+// ## This *should* <style color="primary">work</style>
+// ''',
       blockSyntaxes: const [
         _BrSyntax(),
       ],
       styleSheet: MarkdownStyleSheet(
         horizontalRulePadding: const EdgeInsets.symmetric(vertical: 24),
+        additionalStyles: {
+          'style': const TextStyle(
+            color: Colors.green,
+          ),
+        },
       ),
       builders: <String, MarkdownElementBuilder>{
         'br': _BrBuilder(),
-        'tooltip': _TooltipBuilder(context: context),
+        'tooltip': _TooltipBuilder(),
         'style': _StyleBuilder(),
       },
       inlineSyntaxes: [
@@ -118,10 +126,6 @@ Map<String, String> extractAttributes(String data) {
 }
 
 class _TooltipBuilder extends MarkdownElementBuilder {
-  _TooltipBuilder({required this.context});
-
-  final BuildContext context;
-
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final attrs = element.attributes;
@@ -194,25 +198,25 @@ class _TooltipBuilder extends MarkdownElementBuilder {
 class _StyleBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    return Builder(builder: (context) {
-      final attrs = element.attributes;
+    final attrs = element.attributes;
 
-      final colorKey = attrs['color'];
-      Color? color;
-      if (colorKey == "primary") {
-        color = Colors.red;
-      }
+    final colorKey = attrs['color'];
+    Color? color;
+    if (colorKey == "primary") {
+      color = Colors.red;
+    }
 
-      // TODO(josiahsrc): This should support inherting styling
-      final style = TextStyle(
-        color: color,
-      );
+    // TODO(josiahsrc): This should support inherting styling
+    final style = TextStyle(
+      color: color,
+    );
 
-      return Text(
-        element.textContent,
-        style: style,
-      );
-    });
+    return RichText(
+      text: TextSpan(
+        text: element.textContent,
+        style: parentStyle?.merge(style) ?? style,
+      ),
+    );
   }
 }
 
