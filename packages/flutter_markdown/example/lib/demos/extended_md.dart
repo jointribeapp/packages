@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, always_specify_types, prefer_const_constructors, prefer_single_quotes, inference_failure_on_function_invocation, use_raw_strings
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -10,26 +11,29 @@ class ExtendedMarkdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final md = MarkdownBody(
+//       data: '''
+// # Extended **Markdown** *Test*
+// ## Extended **Markdown** *Test*
+// ### Extended **Markdown** *Test*
+// #### Extended **Markdown** *Test*
+// ##### Extended **Markdown** *Test*
+
+// **Why** *does* theirs work??
+
+// ---
+
+// Text here
+// <br/>
+// Text there
+
+// Some text <style color="primary">with style</style> and some text without. **This** should
+// keep on going and not break after the style
+
+// Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some text without. This should
+// keep on going and not break after the tooltip
+// ''',
       data: '''
-# Extended **Markdown** *Test*
-## Extended **Markdown** *Test*
-### Extended **Markdown** *Test*
-#### Extended **Markdown** *Test*
-##### Extended **Markdown** *Test*
-
-**Why** *does* theirs work??
-
----
-
-Text here
-<br/>
-Text there
-
-Some text <style color="primary">with style</style> and some text without. **This** should
-keep on going and not break after the style
-
-Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some text without. This should
-keep on going and not break after the tooltip
+  Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some *text* without. When it wraps, we lose the text...
 ''',
       blockSyntaxes: const [
         _BrSyntax(),
@@ -39,7 +43,7 @@ keep on going and not break after the tooltip
       ),
       builders: <String, MarkdownElementBuilder>{
         'br': _BrBuilder(),
-        'tooltip': _TooltipBuilder(),
+        'tooltip': _TooltipBuilder(context: context),
         'style': _StyleBuilder(),
       },
       inlineSyntaxes: [
@@ -114,42 +118,76 @@ Map<String, String> extractAttributes(String data) {
 }
 
 class _TooltipBuilder extends MarkdownElementBuilder {
+  _TooltipBuilder({required this.context});
+
+  final BuildContext context;
+
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final attrs = element.attributes;
     final definition = attrs['value'] ?? "";
-    return Builder(builder: (context) {
-      final fallbackStyle = TextStyle(
-        color: Colors.green,
-        decoration: TextDecoration.underline,
-        decorationStyle: TextDecorationStyle.dotted,
-        fontWeight: FontWeight.bold,
-      );
-      final style = preferredStyle?.merge(fallbackStyle) ?? fallbackStyle;
-      return GestureDetector(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(element.textContent),
-                content: Text(definition),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Okay"),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-        child: Text(
-          element.textContent,
-          style: style,
+    //   return Builder(builder: (context) {
+    //     final fallbackStyle = TextStyle(
+    //       color: Colors.green,
+    //       decoration: TextDecoration.underline,
+    //       decorationStyle: TextDecorationStyle.dotted,
+    //       fontWeight: FontWeight.bold,
+    //     );
+    //     final style = preferredStyle?.merge(fallbackStyle) ?? fallbackStyle;
+    //     return GestureDetector(
+    //       onTap: () {
+    //         showDialog(
+    //           context: context,
+    //           builder: (context) {
+    //             return AlertDialog(
+    //               title: Text(element.textContent),
+    //               content: Text(definition),
+    //               actions: [
+    //                 TextButton(
+    //                   onPressed: () => Navigator.of(context).pop(),
+    //                   child: const Text("Okay"),
+    //                 ),
+    //               ],
+    //             );
+    //           },
+    //         );
+    //       },
+    //       child: Text(
+    //         element.textContent,
+    //         style: style,
+    //       ),
+    //     );
+    //   });
+    // }
+    return RichText(
+      text: TextSpan(
+        text: element.textContent,
+        style: TextStyle(
+          color: Colors.green,
+          decoration: TextDecoration.underline,
+          decorationStyle: TextDecorationStyle.dotted,
+          fontWeight: FontWeight.bold,
         ),
-      );
-    });
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(element.textContent),
+                  content: Text(definition),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("Okay"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+      ),
+    );
   }
 }
 
