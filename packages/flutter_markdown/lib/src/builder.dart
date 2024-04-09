@@ -18,10 +18,10 @@ import 'widget.dart';
 const String kMdWorkaround = 'åßåßåœ∑ååƒ';
 
 String wrapMdWorkaround(String text) {
-  if (text.trim().startsWith('**')) {
-    return text;
+  if (text.trim().startsWith('<')) {
+    return '**$kMdWorkaround**$text';
   }
-  return '**$kMdWorkaround**$text';
+  return text;
 }
 
 const List<String> _kBlockTags = <String>[
