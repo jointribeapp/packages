@@ -10,8 +10,35 @@ class ExtendedMarkdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final md = MarkdownBody(
-      data: '''
+    Widget buildCustomMarkdown(String v) {
+      return MarkdownBody(
+        data: v,
+        blockSyntaxes: const [
+          _BrSyntax(),
+        ],
+        styleSheet: MarkdownStyleSheet(
+          horizontalRulePadding: const EdgeInsets.symmetric(vertical: 24),
+          additionalStyles: {
+            'style': const TextStyle(
+              color: Colors.green,
+            ),
+          },
+        ),
+        builders: <String, MarkdownElementBuilder>{
+          'br': _BrBuilder(),
+          'tooltip': _TooltipBuilder(),
+          'style': _StyleBuilder(),
+        },
+        inlineSyntaxes: [
+          _TagSyntax('style'),
+          _TagSyntax('tooltip'),
+        ],
+        otherBlockTags: const {'br'},
+      );
+    }
+
+    final md = buildCustomMarkdown(
+      '''
 # Extended **Markdown** *Test*
 ## Extended **Markdown** *Test*
 ### Extended **Markdown** *Test*
@@ -32,33 +59,6 @@ keep on going and not break after the style
 Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some text without. This should
 keep on going and not break after the tooltip
 ''',
-//       data: '''
-//   Some text with a <tooltip value="This is a tooltip">tooltip</tooltip> and some *text* without. When it wraps, we lose the text...
-// ''',
-//       data: '''
-// ## This *should* <style color="primary">work</style>
-// ''',
-      blockSyntaxes: const [
-        _BrSyntax(),
-      ],
-      styleSheet: MarkdownStyleSheet(
-        horizontalRulePadding: const EdgeInsets.symmetric(vertical: 24),
-        additionalStyles: {
-          'style': const TextStyle(
-            color: Colors.green,
-          ),
-        },
-      ),
-      builders: <String, MarkdownElementBuilder>{
-        'br': _BrBuilder(),
-        'tooltip': _TooltipBuilder(),
-        'style': _StyleBuilder(),
-      },
-      inlineSyntaxes: [
-        _TagSyntax('style'),
-        _TagSyntax('tooltip'),
-      ],
-      otherBlockTags: const {'br'},
     );
 
     return Scaffold(
@@ -67,7 +67,22 @@ keep on going and not break after the tooltip
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: md,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              buildCustomMarkdown(
+                '<style color="primary">This should work</style>',
+              ),
+              buildCustomMarkdown(
+                'hi <style color="primary">This should work</style>',
+              ),
+              buildCustomMarkdown(
+                '**This** should work',
+              ),
+              Divider(),
+              md,
+            ],
+          ),
         ),
       ),
     );

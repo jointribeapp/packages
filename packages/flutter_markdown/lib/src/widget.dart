@@ -173,7 +173,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// The [data] argument must not be null.
   const MarkdownWidget({
     super.key,
-    required this.data,
+    required String data,
     this.selectable = false,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
@@ -194,7 +194,7 @@ abstract class MarkdownWidget extends StatefulWidget {
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
     this.otherBlockTags = const <String>{},
-  });
+  }) : data = '**$kMdWorkaround**$data';
 
   final Set<String> otherBlockTags;
 

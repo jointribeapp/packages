@@ -13,6 +13,10 @@ import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
+/// This is a workaround to fix a bug where markdown ignores leading
+/// customer inline styles.
+const String kMdWorkaround = 'åßåßåœ∑ååƒ';
+
 const List<String> _kBlockTags = <String>[
   'p',
   'h1',
@@ -378,7 +382,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   void visitElementAfter(md.Element element) {
     final String tag = element.tag;
 
-    if (_isBlockTagInternal(tag)) {
+    if (element.tag == 'strong' && element.textContent == kMdWorkaround) {
+      _inlines.removeLast();
+    } else if (_isBlockTagInternal(tag)) {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
