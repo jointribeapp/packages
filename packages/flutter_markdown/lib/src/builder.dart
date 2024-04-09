@@ -17,6 +17,13 @@ import 'widget.dart';
 /// customer inline styles.
 const String kMdWorkaround = 'åßåßåœ∑ååƒ';
 
+String wrapMdWorkaround(String text) {
+  if (text.trim().startsWith('**')) {
+    return text;
+  }
+  return '**$kMdWorkaround**$text';
+}
+
 const List<String> _kBlockTags = <String>[
   'p',
   'h1',

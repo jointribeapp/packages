@@ -173,7 +173,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// The [data] argument must not be null.
   const MarkdownWidget({
     super.key,
-    required String data,
+    required this.data,
     this.selectable = false,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
@@ -194,7 +194,7 @@ abstract class MarkdownWidget extends StatefulWidget {
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
     this.otherBlockTags = const <String>{},
-  }) : data = '**$kMdWorkaround**$data';
+  });
 
   final Set<String> otherBlockTags;
 
@@ -344,7 +344,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
     );
 
     // Parse the source Markdown data into nodes of an Abstract Syntax Tree.
-    final List<String> lines = const LineSplitter().convert(widget.data);
+    final String eData = wrapMdWorkaround(widget.data);
+    final List<String> lines = const LineSplitter().convert(eData);
     final List<md.Node> astNodes = document.parseLines(lines);
 
     // Configure a Markdown widget builder to traverse the AST nodes and
